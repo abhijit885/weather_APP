@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TextInput, Button, Card, Title } from 'react-native-paper';
-import { View, Text, FlatList, Image } from 'react-native'
+import { View, Text, Share, Image, TouchableOpacity } from 'react-native'
 import Header from './Header'
 import AsyncStorage from '@react-native-community/async-storage';
 
@@ -20,6 +20,25 @@ const Home = (props) => {
     useEffect(() => {
         getWeather()
     }, [])
+    const onShare = async () => {
+        try {
+            const result = await Share.share({
+                message:
+                    'React Native | A framework for building native apps using React',
+            });
+            if (result.action === Share.sharedAction) {
+                if (result.activityType) {
+                    // shared with activity type of result.activityType
+                } else {
+                    // shared
+                }
+            } else if (result.action === Share.dismissedAction) {
+                // dismissed
+            }
+        } catch (error) {
+            alert(error.message);
+        }
+    };
     const getWeather = async () => {
         let MyCity = await AsyncStorage.getItem("newcity")
         if (!MyCity) {
@@ -80,32 +99,20 @@ const Home = (props) => {
                 <Title style={{ color: "#e300ff", fontSize: 25 }}>{info.temp}°C</Title>
             </View>
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                <Text style={{marginRight:10}}>Max temperature : {info.maxTemp}°C</Text>
+                <Text style={{ marginRight: 10 }}>Max temperature : {info.maxTemp}°C</Text>
                 <Text>Min temperature : {info.minTemp}°C</Text>
             </View>
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                <Text style={{ textAlign: 'center',marginRight:10 }}>Humidity : {info.humidity}%</Text>
-                <Text style={{  textAlign: 'center', }}>Wind : {info.wind}km/h</Text>
+                <Text style={{ textAlign: 'center', marginRight: 10 }}>Humidity : {info.humidity}%</Text>
+                <Text style={{ textAlign: 'center', }}>Wind : {info.wind}km/h</Text>
 
             </View>
-            <View style={{}}>
-                {/* <Card style={{
-                    margin: 5,
-                    padding: 12
-                }}>
-                    <Title style={{ color: "#00aaff" }}>Temperature - {info.temp}°C</Title>
-                </Card> */}
-                {/* <Card style={{
-                    margin: 5,
-                    padding: 12
-                }}> */}
-                {/* </Card> */}
-                {/* <Card style={{
-                    margin: 5,
-                    padding: 12
-                }}>
-                    <Title style={{ color: "#00aaff" }}>Description-  {info.desc}</Title>
-                </Card> */}
+            <View style={{flexDirection: 'row', alignContent: 'center', justifyContent: 'center' }}>
+                <View style={{ marginTop: 50, height: 35, width: 110, backgroundColor: '#e300ff', }}>
+                    <TouchableOpacity onPress={onShare} >
+                        <Text style={{textAlign:'center',marginTop:6,}}>Share</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
         </View>
     )
